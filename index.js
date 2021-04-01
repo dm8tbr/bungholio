@@ -3,9 +3,11 @@ const Promise = require('bluebird');
 const fs = require('fs');
 const moment = require('moment');
 
+var exec  = require('child_process').exec;
+
 require('dotenv').config();
 
-const client = require('twilio')(process.env.accountSid, process.env.authToken);
+//const client = require('twilio')(process.env.accountSid, process.env.authToken);
 
 const file = require('./items');
 
@@ -22,11 +24,14 @@ async function checkItem(page, item) {
 }
 
 async function sendSMS(item) {
-  return client.messages.create({
+  return exec(`osascript imessage.scpt "${item.name} in stock"`);
+/*
+	client.messages.create({
     body: `${item.name} available! ${item.url}`,
     from: process.env.twilioFrom,
     to: process.env.twilioTo
   });
+  */
 }
 
 async function run() {
@@ -75,5 +80,5 @@ run();
 setInterval(async function() {
   await run();
   console.log('back');
-  console.log('waiting 15 minutes');
-}, 15 * 60 * 1000);
+  console.log('waiting 10 seconds');
+}, 20 * 1000);
